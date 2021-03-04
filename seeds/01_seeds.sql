@@ -8,14 +8,6 @@ VALUES (1, 'Speed lamp', 'description', 'https://images.pexels.com/photos/208667
 (2, 'Blank corner', 'description', 'https://images.pexels.com/photos/2086676/pexels-photo-2086676.jpeg?auto=compress&amp;cs=tinysrgb&amp;h=350', 'https://images.pexels.com/photos/2086676/pexels-photo-2086676.jpeg', 234.71, 6, 4, 8, 'Canada', '123 Nothing Street', 'Hannah', 'Alberta', '23462', true),
 (3, 'Habit mix', 'description', 'https://images.pexels.com/photos/2086676/pexels-photo-2086676.jpeg?auto=compress&amp;cs=tinysrgb&amp;h=350', 'https://images.pexels.com/photos/2086676/pexels-photo-2086676.jpeg', 897.23, 6, 4, 8, 'Canada', '9870 Blank Circle', 'Simcoe County', 'Ontario', '09876', true);
 
-CREATE TABLE reservations (
-  id SERIAL PRIMARY KEY NOT NULL,
-  start_date DATE NOT NULL,
-  end_date DATE NOT NULL,
-  property_id INTEGER REFERENCES properties(id) ON DELETE CASCADE,
-  guest_id INTEGER REFERENCES users(id) ON DELETE CASCADE
-);
-
 INSERT INTO reservations (guest_id, property_id, start_date, end_date) 
 VALUES (1, 1, '2018-09-11', '2018-09-26'),
 (2, 2, '2019-01-04', '2019-02-01'),
