@@ -94,36 +94,25 @@ const getAllProperties = function(options, limit = 10) {
   SELECT properties.*, avg(property_reviews.rating) AS average_rating
   FROM properties
   JOIN property_reviews ON properties.id = property_id
+  WHERE 1=1
   `;
   if (options.city) {
     queryParams.push(`%${options.city}%`);
-    queryString += `WHERE city LIKE $${queryParams.length} `;
+    queryString += `AND city LIKE $${queryParams.length} `;
   }
-  if (options.owner_id && queryParams.length < 1) {
-    queryParams.push(`${options.owner_id}`);
-    queryString += `WHERE owner_id = $${queryParams.length} `;
-  } else if (options.owner_id && queryParams.length >= 1) {
+  if (options.owner_id) {
     queryParams.push(`${options.owner_id}`);
     queryString += `AND owner_id = $${queryParams.length} `;
   }
-  if (options.minimum_price_per_night && queryParams.length < 1) {
-    queryParams.push(`${options.minimum_price_per_night}`);
-    queryString += `WHERE cost_per_night >= $${queryParams.length} `;
-  } else if (options.minimum_price_per_night && queryParams.length >= 1) {
+  if (options.minimum_price_per_night) {
     queryParams.push(`${options.minimum_price_per_night}`);
     queryString += `AND cost_per_night >= $${queryParams.length} `;
   }
-  if (options.maximum_price_per_night && queryParams.length < 1) {
-    queryParams.push(`${options.maximum_price_per_night}`);
-    queryString += `WHERE cost_per_night <= $${queryParams.length} `;
-  } else if (options.maximum_price_per_night && queryParams.length >= 1) {
+  if (options.maximum_price_per_night) {
     queryParams.push(`${options.maximum_price_per_night}`);
     queryString += `AND cost_per_night <= $${queryParams.length} `;
   }
-  if (options.minimum_rating && queryParams.length < 1) {
-    queryParams.push(`${options.minimum_rating}`);
-    queryString += `WHERE rating >= $${queryParams.length} `;
-  } else if (options.minimum_rating && queryParams.length >= 1) {
+  if (options.minimum_rating) {
     queryParams.push(`${options.minimum_rating}`);
     queryString += `AND rating >= $${queryParams.length} `;
   }
@@ -139,16 +128,21 @@ const getAllProperties = function(options, limit = 10) {
 }
 exports.getAllProperties = getAllProperties;
 
-
 /**
  * Add a property to the database
  * @param {{}} property An object containing all of the property details.
  * @return {Promise<{}>} A promise to the property.
  */
 const addProperty = function(property) {
-  const propertyId = Object.keys(properties).length + 1;
-  property.id = propertyId;
-  properties[propertyId] = property;
-  return Promise.resolve(property);
+  // const propertyId = Object.keys(properties).length + 1;
+  // property.id = propertyId;
+  // properties[propertyId] = property;
+  // return Promise.resolve(property);
+  return pool.query(`
+  INSERT INTO users (name, email, password)
+  VALUES ($1, $2, $3) RETURNING *;
+  `, [user.name, user.email, user.password])
+  .then(res => res.rows[0])
+  .catch(err => null);
 }
 exports.addProperty = addProperty;
