@@ -1,5 +1,13 @@
 const properties = require('./json/properties.json');
 const users = require('./json/users.json');
+const { Pool } = require('pg');
+
+const pool = new Pool({
+  user: 'vagrant',
+  password: '123',
+  host: 'localhost',
+  database: 'lightbnb'
+});
 
 /// Users
 
@@ -55,6 +63,21 @@ exports.addUser = addUser;
  */
 const getAllReservations = function(guest_id, limit = 10) {
   return getAllProperties(null, 2);
+//   const queryString = `
+//     SELECT *
+//     FROM properties
+//     LIMIT $2;
+//     `;
+//   const cohortName = process.argv[2];
+//   const limit = process.argv[3] || 5;
+//   const values = [`%${cohortName}%`, limit];
+
+//   pool.query(queryString, values)
+//   .then(res => {
+//     res.rows.forEach(user => {
+//       console.log(`${user.name} has an id of ${user.student_id} and was in the ${user.cohort} cohort`);
+//     })
+//   }).catch(err => console.error('query error', err.stack));
 }
 exports.getAllReservations = getAllReservations;
 
@@ -67,11 +90,11 @@ exports.getAllReservations = getAllReservations;
  * @return {Promise<[{}]>}  A promise to the properties.
  */
 const getAllProperties = function(options, limit = 10) {
-  const limitedProperties = {};
-  for (let i = 1; i <= limit; i++) {
-    limitedProperties[i] = properties[i];
-  }
-  return Promise.resolve(limitedProperties);
+  return pool.query(`
+  SELECT * FROM properties
+  LIMIT $1
+  `, [limit])
+  .then(res => res.rows);
 }
 exports.getAllProperties = getAllProperties;
 
